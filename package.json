@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxtjs/composition-api": "^0.33.1",
+    "nuxt": "^3.2.3"
+  },
+  "dependencies": {
+    "three": "^0.150.1"
+  }
+}
