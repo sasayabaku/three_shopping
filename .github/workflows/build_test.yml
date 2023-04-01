@@ -16,8 +16,18 @@ jobs:
           yarn
           yarn generate
 
+
+
+  merge:
+    needs: build
+
+    runs-on: ubuntu-latest
+    env:
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Approve PR
+        run: gh pr review "$PR_URL" --approve
       - name: Merge PR
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr merge --merge --auto "$PR_URL"
+
