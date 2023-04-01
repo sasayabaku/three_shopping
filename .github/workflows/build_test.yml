@@ -15,3 +15,8 @@ jobs:
         run: |
           yarn
           yarn generate
+
+      - name: Merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }} --merge
