@@ -2,6 +2,7 @@
 import { eventNames } from 'process';
 import * as THREE from 'three';
 import script from '~~/plugins/script';
+
 export default {
     mounted() {
         ui_controler();
@@ -9,6 +10,21 @@ export default {
         animate();
 
         product();
+    },
+    data() {
+        return {
+            modalFlag: false,
+        }
+    },
+    methods: {
+        openModal() {
+            this.modalFlag = true;
+            lock();
+        },
+        closeModal() {
+            this.modalFlag = false;
+            unlock();
+        }
     }
 }
 
@@ -18,6 +34,8 @@ let container, mesh, geometry_1;
 let material_1;
 
 let isUserInteracting = false;
+let lockStatus = false;
+
 let onPointerDownX = 0, onPointerDownY = 0,
     onPointerDownLon = 0, onPointerDownLat = 0,
     lon = 0, lat = 0,
@@ -81,7 +99,6 @@ const ui_controler = () => {
     const scroll_speed = 0.15;
 
     const onDocumentTouchStart = (event: TouchEvent ) => {
-        console.log('touch');
         isUserInteracting = true;
 
         onPointerDownX = event.changedTouches[0].clientX;
@@ -97,7 +114,7 @@ const ui_controler = () => {
             event.preventDefault();
         } 
 
-        if(isUserInteracting === true) {
+        if(isUserInteracting === true && lockStatus === false) {
             lon = ( onPointerDownX - event.changedTouches[0].clientX ) * scroll_speed + onPointerDownLon;
             lat = ( event.changedTouches[0].clientY - onPointerDownY ) * scroll_speed + onPointerDownLat;
         }
@@ -119,6 +136,10 @@ const ui_controler = () => {
     };
 
     const onDocumentWheel = (event: WheelEvent) => {
+        if(lockStatus) {
+            return
+        }
+        
         if (event.deltaY > 0 && camera.fov < 80) {
             camera.fov += event.deltaY * 0.05;
             camera.updateProjectionMatrix();
@@ -152,9 +173,6 @@ const product = () => {
             }
         }
     };
-
-    // window.addEventListener('load', flow, true);
-
     
 }
 
@@ -177,7 +195,13 @@ const update = () => {
     renderer.render(scene, camera);
 }
 
+const lock = () => {
+    lockStatus = true;
+}
 
+const unlock = () => {
+    lockStatus = false;
+}
 
 </script>
 
@@ -187,7 +211,7 @@ const update = () => {
             <div id="vrCanvas"></div>
 
             <div class="thumbnail">
-                <div id="product">
+                <div id="product" @click="openModal">
                     <div id="product_info" class="flex-item">
                         <p><span id="product_name"></span></p>
                         <p><span id="price"></span></p>
@@ -195,6 +219,11 @@ const update = () => {
                     <div class="flex-item"><img id="thumbnail" src="" alt="" width="90%"></div>
                 </div>
             </div>
+
+            <Transition name="fade" apper>
+                <Detail v-if="modalFlag" @cancel="closeModal"/>
+            </Transition>
+
         </div>
     </div>
 </template>
@@ -211,6 +240,15 @@ body {
     width: 100%;
     height: 0;
     overscroll-behavior: none;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    appearance: none;
 }
 
 </style>
@@ -230,7 +268,7 @@ span {
 
 .thumbnail {
     position: fixed;
-    height: 10rem;
+    /* height: 6rem; */
     padding-top: 1rem;
     z-index: 0;
 }
@@ -250,8 +288,30 @@ span {
     margin-left: 2rem;
     display: inline-block;
     color: white;
-    font-size: 1.4rem;
+    font-size: 1.0rem;
     font-weight: 700;
 }
 
+
+/* .test {
+    opacity: 0.5;
+} */
+
+</style>
+
+<style>
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
+    /* opacity: 0.5; */
+}
+
+.fade-leave-active {
+    transition: opacity 0.5s;
+}
 </style>
