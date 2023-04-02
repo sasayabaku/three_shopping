@@ -115,8 +115,11 @@ const animate = () => {
 
 const update = () => {
 
-    mesh.rotation.y = -lon;
-    mesh.rotation.x = lat
+    if(mesh !== void 0){
+        mesh.rotation.y = -lon;
+        mesh.rotation.x = lat
+    }
+
     renderer.render(scene, camera);
 }
 
