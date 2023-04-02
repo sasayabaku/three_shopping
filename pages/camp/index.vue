@@ -14,6 +14,7 @@ export default {
     data() {
         return {
             modalFlag: false,
+            modelURL:  '/models/table.gltf'
         }
     },
     methods: {
@@ -44,7 +45,6 @@ let onPointerDownX = 0, onPointerDownY = 0,
 let displayWidth = window.innerWidth;
 let displayHeight = window.innerHeight;
 
-const pointer = new THREE.Vector2(displayWidth/2, displayHeight/2);
 
 const products = [
     {
@@ -221,7 +221,7 @@ const unlock = () => {
             </div>
 
             <Transition name="fade" apper>
-                <Detail v-if="modalFlag" @cancel="closeModal"/>
+                <Detail v-if="modalFlag" :model_url="modelURL" @cancel="closeModal"/>
             </Transition>
 
         </div>
