@@ -1,10 +1,14 @@
 <script lang="ts">
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { render } from 'nuxt/dist/app/compat/capi';
 import { ShapeFlags } from '@vue/shared';
 import { clear } from 'console';
 
 export default {
+    props: [
+        'model_url'
+    ],
     methods: {
         cancel() {
             this.$emit('cancel');
@@ -14,6 +18,8 @@ export default {
     mounted() {
         ui_controler();
         panorama();
+
+        object_view();
 
         animate();
     }
@@ -42,7 +48,8 @@ const panorama = () => {
     camera = new THREE.PerspectiveCamera(
         60, displayWidth / displayHeight, 10, 10000
     );
-    camera.position.set(0, 0, +1000);
+    camera.position.set(5, 10, 10);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
     
     scene = new THREE.Scene();
 
@@ -50,18 +57,60 @@ const panorama = () => {
     const material = new THREE.MeshLambertMaterial({ color: 0x6699FF });
     mesh = new THREE.Mesh(geometry_1, material);
 
-    scene.add(mesh);
+    // scene.add(mesh);
 
     const directionalLight = new THREE.DirectionalLight(0xFFFFFF);
     directionalLight.position.set(1, 1, 1);
+    // scene.add(directionalLight);
 
-    scene.add(directionalLight);
+    const pointLight = new THREE.PointLight(0xFFFFFF, 2, 40, 1);
+    pointLight.position.set(20, 20, 0);
+    // scene.add(pointLight);
 
-    renderer = new THREE.WebGLRenderer();
+    // const lightHelper = new THREE.PointLightHelper(pointLight);
+    // scene.add(lightHelper);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    // scene.add(ambientLight);
+
+    const hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.2);
+    // scene.add(hemiLight);
+
+    renderer = new THREE.WebGLRenderer( { alpha: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( displayWidth, displayHeight );
+    renderer.setClearColor(0x000000, 0);  // 透明化
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.physicallyCorrectLights = true;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.tomeMapping = THREE.ACESFilmicToneMapping;
     container?.appendChild( renderer.domElement );
 
+}
+
+const object_view = () => {
+    const loader = new GLTFLoader();
+    const mesh_scale = 3;
+    loader.load("/models/lighting_table2.gltf", (gltf:any) => {
+        mesh = gltf.scene;
+        mesh.position.set(0, 0, 0);
+        
+        mesh.scale.set(mesh_scale, mesh_scale, mesh_scale);
+        mesh.traverse((object:any) => {
+            if(object.isMesh) {
+                object.material.transparent = true;
+                object.receiveShadow = true;
+                object.castShadow = true;
+            }
+        })
+
+        scene.add(mesh);
+    })
+
+    const axis = new THREE.AxesHelper(2000);
+    axis.position.set(0, 0, 0);
+    scene.add(axis);
 }
 
 const animate = () => {
@@ -81,6 +130,8 @@ const ui_controler = () => {
     console.log('UI Controler');
 
     const scroll_speed = 0.01;
+
+    const canvas = document.getElementById('productCanvas');
 
     onPreviewTouchStart = (event: TouchEvent ) => {
         isUserInteracting = true;
@@ -105,18 +156,18 @@ const ui_controler = () => {
     };
 
     onPreviewWheel = (event: WheelEvent) => {
-        if (event.deltaY > 0 && camera.fov < 80) {
+        if (event.deltaY > 0 && camera.fov < 100) {
             camera.fov += event.deltaY * 0.05;
             camera.updateProjectionMatrix();
-        } else if (event.deltaY <= 0 && camera.fov > 45) {
+        } else if (event.deltaY <= 0 && camera.fov > 15) {
             camera.fov += event.deltaY * 0.05;
             camera.updateProjectionMatrix();
         }
     }
 
-    document.addEventListener('touchstart', onPreviewTouchStart, false);
-    document.addEventListener('touchmove', onPreviewTouchMove, false);
-    document.addEventListener('wheel', onPreviewWheel, false);
+    canvas.addEventListener('touchstart', onPreviewTouchStart, false);
+    canvas.addEventListener('touchmove', onPreviewTouchMove, false);
+    canvas.addEventListener('wheel', onPreviewWheel, false);
 }
 
 const clear = () => {
@@ -128,17 +179,29 @@ const clear = () => {
 </script>
 
 <template>
-    <!-- <Transition name="modal" apper> -->
         <div class="detail">
-            <!-- <div class="mycenter">Product details</div> -->
             <div class="mycenter">
                 <div class="object3d-viewer mycenter">
                     <div id="productCanvas"></div>
                 </div>
+                <div class="mycenter description">
+                    <ul class="title">
+                        <li class="name">Wood Table</li>
+                        <li class="price">¥10,000</li>
+                    </ul>
+
+                    <div class="details">Lorem ipsum dolor sit amet, 
+                        consectetur adipiscing elit, sed do eiusmod tempor 
+                        incididunt ut labore et dolore magna aliqua. 
+                        Ut enim ad minim veniam, quis nostrud exercitation 
+                        ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+                        Duis aute irure dolor in reprehenderit in voluptate velit esse 
+                        cillum dolore eu fugiat nulla pariatur.</div>
+                </div>
             </div>
 
             <div class="close">
-                <button id="close_button" @click="cancel">Close</button>
+                <button id="close_button" @click="cancel">×</button>
             </div>
         </div>
     <!-- </Transition> -->
@@ -146,31 +209,54 @@ const clear = () => {
 
 <style scoped lang="css">
 
+li {
+  list-style: none;  
+}
+
 .mycenter {
-    display: flex;
-    justify-content: center;
+    margin: 0 auto;
     align-items: center;
     text-align: center;
 }
 .detail {
     position: absolute;
     display: block;
-    /* justify-content: center; */
     height:100vh;
     width:100vw;
     background: #0000009c;
 }
 .object3d-viewer {
-    height: 20rem;
-    /* max-height: 20rem; */
+    height: 15rem;
     width: 90%;
     margin-top: 4.5rem;
 
-    background: white;
+    background: #00000000;
     border-radius: 1.5rem;
 
     overflow: hidden;
 
+}
+
+.description {
+    margin-top: 1rem;
+    padding: 0 1.5rem;
+    height: 12rem;
+    overflow: scroll;
+    color: white;
+}
+
+.title {
+    display: flex;
+    font-size: 1.2rem;
+    padding-left: 0.5rem;
+}
+
+.title li {
+    margin-right: 1.5rem;
+}
+
+.description .details {
+    padding: 0 0.5rem;
 }
 
 .close {
@@ -182,9 +268,12 @@ const clear = () => {
 }
 
 #close_button {
-    background: white;
+    background: #00000000;
+    border:2px solid #ffffff;
+    color: #ffffff;
     font-size: 1.3rem;
-    width: 8rem;
+    width: 2.5rem;
+    text-align: center;
     padding: 0.3rem 0rem;
     border-radius: 0.25rem;
 }
