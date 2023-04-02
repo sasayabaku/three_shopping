@@ -53,12 +53,6 @@ const panorama = () => {
     
     scene = new THREE.Scene();
 
-    const geometry_1 = new THREE.TorusGeometry(300, 100, 64, 100);
-    const material = new THREE.MeshLambertMaterial({ color: 0x6699FF });
-    mesh = new THREE.Mesh(geometry_1, material);
-
-    // scene.add(mesh);
-
     const directionalLight = new THREE.DirectionalLight(0xFFFFFF);
     directionalLight.position.set(1, 1, 1);
     // scene.add(directionalLight);
