@@ -11,10 +11,13 @@ export default {
 
         product();
     },
+    unmounted() {
+        console.log('unmounted');
+    },
     data() {
         return {
             modalFlag: false,
-            modelURL:  '/models/table.gltf'
+            modelURL:  '/models/cup.gltf'
         }
     },
     methods: {
@@ -48,9 +51,9 @@ let displayHeight = window.innerHeight;
 
 const products = [
     {
-        'name': 'Wood Table',
-        'price': 10000,
-        'img': '/products/table.png'
+        'name': 'Starbacks Coffie',
+        'price': 450,
+        'img': '/products/cup.png'
     }
 ];
 
@@ -231,6 +234,7 @@ const unlock = () => {
 
 <style lang="css">
 html {
+    overflow: hidden;
     overscroll-behavior: none;
 }
 

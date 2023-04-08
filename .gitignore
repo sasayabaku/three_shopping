@@ -2,6 +2,11 @@ node_modules
 dist
 .nuxt
 .output
+.firebase
+firebase.json
+.firebaserc
+
 public/*/*.gltf
+public/*/*.glb
 
 .DS_Store

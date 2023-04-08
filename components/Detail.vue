@@ -1,6 +1,7 @@
 <script lang="ts">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { render } from 'nuxt/dist/app/compat/capi';
 import { ShapeFlags } from '@vue/shared';
 import { clear } from 'console';
@@ -22,6 +23,14 @@ export default {
         object_view();
 
         animate();
+
+        this.$nextTick(() => {
+            console.log("AAA");
+        })
+    },
+    unmounted() {
+        console.log('unmounte');
+        console.log(renderer);
     }
 }
 
@@ -46,26 +55,26 @@ const panorama = () => {
     displayHeight = container.getBoundingClientRect().height;
 
     camera = new THREE.PerspectiveCamera(
-        60, displayWidth / displayHeight, 10, 10000
+        60, displayWidth / displayHeight, 10, 8000
     );
     camera.position.set(5, 10, 10);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     
     scene = new THREE.Scene();
 
-    const directionalLight = new THREE.DirectionalLight(0xFFFFFF);
+    const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.5, 1.5);
     directionalLight.position.set(1, 1, 1);
-    // scene.add(directionalLight);
+    scene.add(directionalLight);
 
     const pointLight = new THREE.PointLight(0xFFFFFF, 2, 40, 1);
     pointLight.position.set(20, 20, 0);
-    // scene.add(pointLight);
+    scene.add(pointLight);
 
     // const lightHelper = new THREE.PointLightHelper(pointLight);
     // scene.add(lightHelper);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-    // scene.add(ambientLight);
+    scene.add(ambientLight);
 
     const hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.2);
     // scene.add(hemiLight);
@@ -79,14 +88,24 @@ const panorama = () => {
     renderer.physicallyCorrectLights = true;
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.tomeMapping = THREE.ACESFilmicToneMapping;
-    container?.appendChild( renderer.domElement );
+    container.appendChild( renderer.domElement );
 
 }
 
 const object_view = () => {
+
+    console.log('Object View')
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+
     const loader = new GLTFLoader();
-    const mesh_scale = 3;
-    loader.load("/models/lighting_table2.gltf", (gltf:any) => {
+    loader.setDRACOLoader(dracoLoader);
+
+
+    const mesh_scale = 1;
+    const modelfile = "/models/cup.gltf"
+    loader.load(modelfile, (gltf:any) => {
         mesh = gltf.scene;
         mesh.position.set(0, 0, 0);
         
@@ -104,7 +123,7 @@ const object_view = () => {
 
     const axis = new THREE.AxesHelper(2000);
     axis.position.set(0, 0, 0);
-    scene.add(axis);
+    // scene.add(axis);
 }
 
 const animate = () => {
@@ -171,6 +190,9 @@ const clear = () => {
     document.removeEventListener('touchstart', onPreviewTouchStart, false);
     document.removeEventListener('touchmove', onPreviewTouchMove, false);
     document.removeEventListener('wheel', onPreviewWheel, false);
+
+    var clone = container.cloneNode(false);
+    container.parentNode.replaceChild(clone, container);
 }
 
 </script>
@@ -183,8 +205,8 @@ const clear = () => {
                 </div>
                 <div class="mycenter description">
                     <ul class="title">
-                        <li class="name">Wood Table</li>
-                        <li class="price">¥10,000</li>
+                        <li class="name">Starbacks Coffie</li>
+                        <li class="price">¥450</li>
                     </ul>
 
                     <div class="details">Lorem ipsum dolor sit amet, 
