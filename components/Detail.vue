@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { render } from 'nuxt/dist/app/compat/capi';
 import { ShapeFlags } from '@vue/shared';
 import { clear } from 'console';
@@ -17,7 +18,7 @@ export default {
         }
     },
     mounted() {
-        ui_controler();
+        // ui_controler();
         panorama();
 
         object_view();
@@ -35,7 +36,7 @@ export default {
 }
 
 let camera:THREE.PerspectiveCamera, scene:THREE.Scene, renderer:THREE.WebGLRenderer;
-let container:any;
+let container:any, controls:OrbitControls;
 let mesh:any;
 
 let isUserInteracting:boolean = false;
@@ -55,9 +56,9 @@ const panorama = () => {
     displayHeight = container.getBoundingClientRect().height;
 
     camera = new THREE.PerspectiveCamera(
-        60, displayWidth / displayHeight, 10, 8000
+        60, displayWidth / displayHeight, 1, 8000
     );
-    camera.position.set(5, 10, 10);
+    camera.position.set(5, 20, 30);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     
     scene = new THREE.Scene();
@@ -78,6 +79,13 @@ const panorama = () => {
 
     const hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.2);
     // scene.add(hemiLight);
+
+    controls = new OrbitControls(camera, container);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.2
+    controls.maxDistance = 20;
+    controls.minDistance = 10;
+    controls.enablePan = false;
 
     renderer = new THREE.WebGLRenderer( { alpha: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -103,7 +111,7 @@ const object_view = () => {
     loader.setDRACOLoader(dracoLoader);
 
 
-    const mesh_scale = 1;
+    const mesh_scale = 4;
     const modelfile = "/models/cup.gltf"
     loader.load(modelfile, (gltf:any) => {
         mesh = gltf.scene;
@@ -128,6 +136,8 @@ const object_view = () => {
 
 const animate = () => {
     requestAnimationFrame(animate);
+
+    controls.update();
 
     update();
 }
