@@ -160,7 +160,7 @@ const ui_controler = () => {
     }
 
     onPreviewTouchMove = (event: TouchEvent ) => {
-        if (event.touches.length > 1) {
+        if (event.touches.length > 0) {
             event.preventDefault();
         } 
 
@@ -247,7 +247,7 @@ li {
 .object3d-viewer {
     height: 15rem;
     width: 90%;
-    margin-top: 4.5rem;
+    margin-top: 3.5rem;
 
     background: #00000000;
     border-radius: 1.5rem;
@@ -259,7 +259,7 @@ li {
 .description {
     margin-top: 1rem;
     padding: 0 1.5rem;
-    height: 12rem;
+    height: 10rem;
     overflow: scroll;
     color: white;
 }
@@ -280,7 +280,7 @@ li {
 
 .close {
     position: absolute;
-    bottom: 3rem;
+    bottom: 5rem;
     display: flex;
     width: 100%;
     justify-content: center;
