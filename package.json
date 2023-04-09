@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@nuxtjs/composition-api": "^0.33.1",
+    "@nuxtjs/google-fonts": "^3.0.0",
     "nuxt": "^3.2.3"
   },
   "dependencies": {

@@ -19,6 +19,16 @@ export default defineNuxtConfig({
             ]
         }
     },
+    modules: ['@nuxtjs/google-fonts'],
+    googleFonts: {
+        families: {
+            Inter: true,
+            'Noto Sans JP': true
+        }
+    },
+    css: [
+        '@/assets/global.css'
+    ],
     server: {
         port: process.env.PORT || 8000,
         host: process.env.HOST || "0.0.0.0",
