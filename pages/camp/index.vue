@@ -1,6 +1,7 @@
 <script lang="ts">
 import { eventNames } from 'process';
 import * as THREE from 'three';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import script from '~~/plugins/script';
 
 export default {
@@ -33,7 +34,7 @@ export default {
 }
 
 let camera:THREE.PerspectiveCamera, scene:THREE.Scene, renderer:THREE.WebGLRenderer;
-let container, mesh, geometry_1;
+let container, mesh, geometry_1, controls:OrbitControls;
 
 let material_1;
 
@@ -88,6 +89,14 @@ const panorama = () => {
 
     scene.add(mesh);
 
+    controls = new OrbitControls(camera, container);
+    controls.enableDamping = false;
+    controls.dampingFactor = 0.1;
+    controls.enableZoom = true;
+    controls.rotateSpeed = -0.3
+    
+    controls.target.x = -(camera.position.x + 0.001);
+
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( displayWidth, displayHeight );
@@ -132,7 +141,7 @@ const ui_controler = () => {
         } else if(displayProduct !== null) {
             productName.innerText = '';
             price.innerText = '';
-            productImg.src = '';
+            productImg.src = null;
             displayProduct = null;
         }
 
@@ -154,7 +163,7 @@ const ui_controler = () => {
 
     document.addEventListener('touchstart', onDocumentTouchStart, false);
     document.addEventListener('touchmove', onDocumentTouchMove, false);
-    document.addEventListener('wheel', onDocumentWheel, false);
+    // document.addEventListener('wheel', onDocumentWheel, false);
 }
 
 const product = () => {
@@ -182,6 +191,8 @@ const product = () => {
 const animate = () => {
     requestAnimationFrame(animate);
 
+    controls.update();
+
     update();
 }
 
@@ -194,7 +205,6 @@ const update = () => {
     camera.target.y = 500 * Math.cos(phi);
     camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
 
-    camera.lookAt(camera.target);
     renderer.render(scene, camera);
 }
 

@@ -63,18 +63,18 @@ const panorama = () => {
     
     scene = new THREE.Scene();
 
-    const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.5, 1.5);
+    const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 2.5, 1.5);
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
-    const pointLight = new THREE.PointLight(0xFFFFFF, 2, 40, 1);
+    const pointLight = new THREE.PointLight(0xFFFFFF, 3, 40, 1);
     pointLight.position.set(20, 20, 0);
     scene.add(pointLight);
 
     // const lightHelper = new THREE.PointLightHelper(pointLight);
     // scene.add(lightHelper);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.9);
     scene.add(ambientLight);
 
     const hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.2);
