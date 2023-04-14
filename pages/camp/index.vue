@@ -1,8 +1,6 @@
 <script lang="ts">
-import { eventNames } from 'process';
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import script from '~~/plugins/script';
 
 export default {
     mounted() {
@@ -93,6 +91,8 @@ const panorama = () => {
     controls.enableDamping = false;
     controls.dampingFactor = 0.1;
     controls.enableZoom = true;
+    controls.maxDistance = 500;
+    controls.minDistance = 100;
     controls.rotateSpeed = -0.3
     
     controls.target.x = -(camera.position.x + 0.001);
@@ -136,34 +136,20 @@ const ui_controler = () => {
                 displayProduct = products[0];
                 productName.innerText = displayProduct['name'];
                 price.innerText = "¥ " + String(displayProduct['price']);
+                productImg.style.display = 'block';
                 productImg.src = displayProduct['img'];
             }
         } else if(displayProduct !== null) {
             productName.innerText = '';
             price.innerText = '';
-            productImg.src = null;
+            productImg.style.display = 'none';
             displayProduct = null;
         }
 
     };
 
-    const onDocumentWheel = (event: WheelEvent) => {
-        if(lockStatus) {
-            return
-        }
-        
-        if (event.deltaY > 0 && camera.fov < 80) {
-            camera.fov += event.deltaY * 0.05;
-            camera.updateProjectionMatrix();
-        } else if (event.deltaY <= 0 && camera.fov > 45) {
-            camera.fov += event.deltaY * 0.05;
-            camera.updateProjectionMatrix();
-        }
-    }
-
     document.addEventListener('touchstart', onDocumentTouchStart, false);
     document.addEventListener('touchmove', onDocumentTouchMove, false);
-    // document.addEventListener('wheel', onDocumentWheel, false);
 }
 
 const product = () => {
