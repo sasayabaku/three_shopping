@@ -136,12 +136,13 @@ const ui_controler = () => {
                 displayProduct = products[0];
                 productName.innerText = displayProduct['name'];
                 price.innerText = "¥ " + String(displayProduct['price']);
+                productImg.style.display = 'block';
                 productImg.src = displayProduct['img'];
             }
         } else if(displayProduct !== null) {
             productName.innerText = '';
             price.innerText = '';
-            productImg.src = null;
+            productImg.style.display = 'none';
             displayProduct = null;
         }
 
