@@ -18,7 +18,6 @@ export default {
         }
     },
     mounted() {
-        // ui_controler();
         panorama();
 
         object_view();
@@ -150,50 +149,6 @@ const update = () => {
     }
 
     renderer.render(scene, camera);
-}
-
-const ui_controler = () => {
-    console.log('UI Controler');
-
-    const scroll_speed = 0.01;
-
-    const canvas = document.getElementById('productCanvas');
-
-    onPreviewTouchStart = (event: TouchEvent ) => {
-        isUserInteracting = true;
-
-        onPointerDownX = event.changedTouches[0].clientX;
-        onPointerDownY = event.changedTouches[0].clientY;
-
-        onPointerDownLon = lon;
-        onPointerDownLat = lat;
-    }
-
-    onPreviewTouchMove = (event: TouchEvent ) => {
-        if (event.touches.length > 0) {
-            event.preventDefault();
-        } 
-
-        if(isUserInteracting === true) {
-            lon = ( onPointerDownX - event.changedTouches[0].clientX ) * scroll_speed + onPointerDownLon;
-            lat = ( event.changedTouches[0].clientY - onPointerDownY ) * scroll_speed + onPointerDownLat;
-        }
-
-    };
-
-    onPreviewWheel = (event: WheelEvent) => {
-        if (event.deltaY > 0 && camera.fov < 100) {
-            camera.fov += event.deltaY * 0.05;
-            camera.updateProjectionMatrix();
-        } else if (event.deltaY <= 0 && camera.fov > 15) {
-            camera.fov += event.deltaY * 0.05;
-            camera.updateProjectionMatrix();
-        }
-    }
-
-    canvas.addEventListener('touchstart', onPreviewTouchStart, false);
-    canvas.addEventListener('touchmove', onPreviewTouchMove, false);
-    canvas.addEventListener('wheel', onPreviewWheel, false);
 }
 
 const clear = () => {
