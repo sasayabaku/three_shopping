@@ -3,9 +3,6 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { render } from 'nuxt/dist/app/compat/capi';
-import { ShapeFlags } from '@vue/shared';
-import { clear } from 'console';
 
 export default {
     props: [
