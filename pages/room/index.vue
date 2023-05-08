@@ -46,11 +46,12 @@ const panorama = () => {
     controls = new OrbitControls(camera, container);
     controls.enableDamping = true;
 
-    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 2.5);
+    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
     scene.add(ambientLight);
 
     const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 3.5);
     directionalLight.position.set(1, 0, 1);
+    directionalLight.castShadow = true;
     scene.add(directionalLight);
 
     renderer = new THREE.WebGLRenderer( { alpha:true } );
@@ -85,7 +86,7 @@ const model_load = () => {
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
-    const modelFile = '/models/cup.gltf';
+    const modelFile = '/models/room.glb';
     
     loader.load(modelFile, (gltf:any) => {
         mesh = gltf.scene;
